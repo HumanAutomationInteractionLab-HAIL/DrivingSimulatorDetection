@@ -329,22 +329,22 @@ def draw_lane_lines(image):
 
     # Greyscale image
     greyscaled_image = grayscale(image)
-    #plt.subplot(2, 2, 1)
-    #plt.imshow(greyscaled_image, cmap="gray")
+    plt.subplot(2, 2, 1)
+    plt.imshow(greyscaled_image, cmap="gray")
 
     # Gaussian Blur
     #blurred_grey_image = gaussian_blur(greyscaled_image, 5)
     # Canny edge detection
     #edges_image = canny(blurred_grey_image, 100, 200)
-    edges_image=abs_sobel_thresh(image,orient='x',sobel_kernel=ksize,thresh=(90,255))
+    edges_image=abs_sobel_thresh(image,orient='x',sobel_kernel=ksize,thresh=(30,255))
     # Mask edges image
     border = 0
     vertices = np.array([[(150, 1050), (820, 640), (1020, 640), (1780, 1050)]], dtype=np.int32)
     edges_image_with_mask = region_of_interest(edges_image, vertices)
     ## Plot masked edges image
     bw_edges_image_with_mask = cv2.cvtColor(edges_image_with_mask, cv2.COLOR_GRAY2BGR)
-    #plt.subplot(2, 2, 2)
-    #plt.imshow(bw_edges_image_with_mask)
+    plt.subplot(2, 2, 2)
+    plt.imshow(bw_edges_image_with_mask)
 
     # Hough lines
     rho = 1  # distance resolution in pixels of the Hough grid
@@ -359,12 +359,12 @@ def draw_lane_lines(image):
     # hough_rgb_image.dtype: uint8.  Shape: (540,960,3).
     # hough_rgb_image is like [[[0 0 0], [0 0 0],...] [[0 0 0], [0 0 0],...]]
     ## Plot Hough lines image
-    #plt.subplot(2, 2, 3)
-    #plt.imshow(hough_rgb_image, cmap='Greys_r')
+    plt.subplot(2, 2, 3)
+    plt.imshow(hough_rgb_image, cmap='Greys_r')
     # Combine lines image with original image
     final_image = weighted_img(hough_rgb_image, image)
     ## Plot final image
-    #plt.subplot(2, 2, 4)
-    #plt.imshow(final_image, cmap='Greys_r')
+    plt.subplot(2, 2, 4)
+    plt.imshow(final_image, cmap='Greys_r')
     return final_image
 

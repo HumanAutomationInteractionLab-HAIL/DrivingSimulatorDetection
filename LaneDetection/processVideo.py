@@ -5,12 +5,12 @@ from laneDetectionMethods import *
 #white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 #white_clip.write_videofile(white_output, audio=False)
 
-cap=cv2.VideoCapture("test_videos/Sample2.mp4")
+cap=cv2.VideoCapture("sample_opends.mp4")
 timeF=3#隔3帧截取一次
 c=1
 totalFrameNumber = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 ffourcc = cv2.VideoWriter_fourcc(*'XVID')
-out=cv2.VideoWriter('output.avi',ffourcc,15,(1920,1080))
+out=cv2.VideoWriter('output_opends.avi',ffourcc,15,(1920,1080))
 while(cap.isOpened()):
     ret,frame=cap.read()
     if(ret==True):

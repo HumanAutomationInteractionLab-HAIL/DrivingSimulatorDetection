@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4da6bf0c-fab6-4004-a57e-2a86f63768f9}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>processImage.py</StartupFile>
+    <StartupFile>processVideo.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
