@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\LaneDetection"
+    "\\CarDetection",
+    "\\LaneDetection",
+    "\\Total"
   ],
-  "SelectedNode": "\\LaneDetection\\method.py",
+  "SelectedNode": "\\CarDetection\\test.py",
   "PreviewInSolutionExplorer": false
 }

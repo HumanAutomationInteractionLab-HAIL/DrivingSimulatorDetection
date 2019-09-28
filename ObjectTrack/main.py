@@ -38,18 +38,16 @@ def shibietest(img1,kp1,des1,img2):#识别提取视频帧中是否存在指定�
     locator_x=[]
     locator_y=[]
     for mat in good:
-  #  img1_idx = mat.queryIdx
+        #img1_idx = mat.queryIdx
         img2_idx = mat.trainIdx
         # x - columns
         # y - rows
-   # (x1,y1) = kp1[img1_idx].pt
+        #(x1,y1) = kp1[img1_idx].pt
         (x2,y2) = kp2[img2_idx].pt
         locator_x.append(x2)
         locator_y.append(y2)
         ##print(x2,y2)
 
-    
-    
     n=0
     count=len(locator_x)
   
@@ -123,7 +121,7 @@ def shibietest(img1,kp1,des1,img2):#识别提取视频帧中是否存在指定�
     print(locator_x)
     print(locator_y)
     if(count<8):
-        return [0,0]
+        return [0,0],None
     
     if len(good)>MIN_MATCH_COUNT:
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
@@ -136,7 +134,8 @@ def shibietest(img1,kp1,des1,img2):#识别提取视频帧中是否存在指定�
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
         dst = cv2.perspectiveTransform(pts,M)
 
-        img2 = cv2.polylines(img2,[np.int32(dst)],True,255,3, cv2.LINE_AA)
+        img2 = cv2.polylines(img2,[np.int32(dst)],True,255,1, cv2.LINE_AA) #测试
+        
 
 
 
@@ -146,8 +145,8 @@ def shibietest(img1,kp1,des1,img2):#识别提取视频帧中是否存在指定�
     #               matchesMask = matchesMask, # draw only inliers
     #               flags = 2)
 
-    img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None)#,**draw_params)
-    plt.imshow(img3, 'gray'),plt.show()
+    #img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None)#,**draw_params)
+    #plt.imshow(img3, 'gray'),plt.show()
     
     time_end=time.time()
     print(time_end-time_start)
@@ -156,11 +155,12 @@ def shibietest(img1,kp1,des1,img2):#识别提取视频帧中是否存在指定�
 
     locator_mean=[np.mean(locator_x),np.mean(locator_y)]
     
+    #img2=cv2.circle(img2,(int(locator_mean[0]), int(locator_mean[1])),5,(255,0,0),-1)
     
     print(locator_mean)
     
     
-    return (locator_mean)
+    return (locator_mean),img2
 def track(old_img,new_img,point):#光流法追踪图像在相邻帧中的位置
     
     [x,y]=point
@@ -206,9 +206,9 @@ def track(old_img,new_img,point):#光流法追踪图像在相邻帧中的位置
         frame = cv2.circle(new_img,(a,b),5,color[i].tolist(),-1)
     img = cv2.add(frame,mask)
 
-    cv2.imshow('frame',img)
+    #cv2.imshow('frame',img)
     
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
     
     
     
@@ -216,8 +216,8 @@ def track(old_img,new_img,point):#光流法追踪图像在相邻帧中的位置
 
     return [x,y]
 
-cap2=cv2.VideoCapture("F:\\Recodring\Sample.mp4")#原数据
-img1 = cv2.imread('right_signword.jpg',0)          # queryImage
+cap2=cv2.VideoCapture("D:\github\DrivingSimulatorDetection\ObjectTrack\car_test.mp4")#原数据
+img1 = cv2.imread('D:\github\DrivingSimulatorDetection\ObjectTrack\car.PNG',0)          # queryImage
 sift = cv2.xfeatures2d.SIFT_create()
 
 kp1, des1 = sift.detectAndCompute(img1,None)
@@ -251,9 +251,13 @@ while(cap2.isOpened() and (c<3600)):
     
   #if ret==True:
     frame2=cv2.cvtColor(frame3,cv2.COLOR_BGR2RGB)
-    cv2.imshow('Origin',frame3)
+    
    # result1.append(center(mask))
-    point_result2=shibietest(img1,kp1,des1,frame2)
+    point_result2,frame2=shibietest(img1,kp1,des1,frame2)
+    if frame2 is None:
+        cv2.imshow('Origin',frame3)
+    else:
+        cv2.imshow('Origin',cv2.cvtColor(frame2,cv2.COLOR_BGR2RGB))
     result2.append(point_result2)
 
     if point_result2 != [0,0]:                     # detect back
