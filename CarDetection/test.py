@@ -1,32 +1,42 @@
-#import CarDetectionMethod
+from CarDetectionMethod_s import *
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+import time
+from collections import deque
 
-##white_output = 'Sample.mp4'
-##clip1 = VideoFileClip("test_videos/Sample2.mp4")
-##white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
-##white_clip.write_videofile(white_output, audio=False)
+face_cascade = cv2.CascadeClassifier('D:\github\DrivingSimulatorDetection\CarDetection\cascade.xml')
+vc = cv2.VideoCapture('D:\github\DrivingSimulatorDetection\CarDetection\car_test.mp4')
+road_v = np.array([[(150, 1050), (820, 640), (1020, 640), (1780, 1050)]], dtype=np.int32)#过滤路mask
+if vc.isOpened():
+    rval , frame = vc.read()
+else:
+    rval = False
+timeF=5 #隔5帧取一次
+count_d=10#回溯帧数
+buff_detect=deque(maxlen=count_d)
+frameout=[(0,(0,0),(0,0))]
+c=0
+while rval:
+    c=c+1
+    rval, frame = vc.read()
+    post_frame = vc.get(1)      
+    buff_detect.append(frame)
+    if c%timeF==0:
+        # car detection.
+        newframe=region_of_interest(frame,road_v)
+        cars = face_cascade.detectMultiScale(newframe,1.2,5,cv2.CASCADE_SCALE_IMAGE,)
+    
+        ncars = 0
+        for (x,y,w,h) in cars:
+            if (h>0.3*w) and (h<2*w) and w>20 and h>20:
+                #cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)              
+                ncars = ncars + 1
+                for i in range(count_d-1):
+                    [x1,y1]=track(buff_detect[count_d-i],buff_detect[count_d-i-1],[x,y])
+                    [x2,y2]=track(buff_detect[count_d-i],buff_detect[count_d-i-1],[x+w,y+h])
+                    frameout.append((post_frame-i-1,(x1,y1),(x2,y2))
 
-#cap=cv2.VideoCapture("sample_opends.mp4")
-#timeF=3#��3֡��ȡһ��
-#c=1
-#totalFrameNumber = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-#ffourcc = cv2.VideoWriter_fourcc(*'XVID')
-#out=cv2.VideoWriter('output_opends.avi',ffourcc,15,(1920,1080))
-#while(cap.isOpened()):
-#    ret,frame=cap.read()
-#    if(ret==True):
-#        if c%timeF==0:
-#            frame=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-#            result=process_image(frame)
-#            result=cv2.cvtColor(result,cv2.COLOR_BGR2RGB)
-#            out.write(result)a
-#            print(c,'/',totalFrameNumber)
-#    else:
-#        break
-#    c=c+1
-#cap.release()
-#out.release()
-#cv2.destroyAllWindows()
+    # show result
+    vc.release()
 
-import CarDetectionMethod
-
-CarDetectionMethod.detectCars('D:/github/DrivingSimulatorDetection/CarDetection/car_test.mp4')
