@@ -1,10 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\CarDetection",
-    "\\ObjectTrack",
-    "\\Total"
+    "\\CarDetection"
   ],
-  "SelectedNode": "\\CarDetection\\CarDetectionMethod._s.py",
+  "SelectedNode": "\\PedestrianDetection",
   "PreviewInSolutionExplorer": false
 }
